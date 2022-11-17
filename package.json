@@ -1,5 +1,5 @@
 {
-    "name": "reconnecting-websocket",
+    "name": "@reedsy/reconnecting-websocket",
     "version": "4.4.0",
     "description": "Reconnecting WebSocket",
     "main": "./dist/reconnecting-websocket-cjs.js",
@@ -52,21 +52,20 @@
         "uglify-es": "^3.3.10",
         "ws": "^6.2.1"
     },
-    "dependencies": {},
     "directories": {
         "test": "test"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/pladaria/reconnecting-websocket.git"
+        "url": "git+https://github.com/reedsy/reconnecting-websocket.git"
     },
     "bugs": {
-        "url": "https://github.com/pladaria/reconnecting-websocket/issues"
+        "url": "https://github.com/reedsy/reconnecting-websocket/issues"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"
     },
-    "homepage": "https://github.com/pladaria/reconnecting-websocket#readme",
+    "homepage": "https://github.com/reedsy/reconnecting-websocket#readme",
     "lint-staged": {
         "linters": {
             "*.{js,md,ts}": [
