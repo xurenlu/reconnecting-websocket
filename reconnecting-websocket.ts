@@ -351,7 +351,6 @@ export default class ReconnectingWebSocket {
         if (this._connectLock || !this._shouldReconnect) {
             return;
         }
-        this._connectLock = true;
 
         const {
             maxRetries = DEFAULT.maxRetries,
@@ -364,6 +363,7 @@ export default class ReconnectingWebSocket {
             return;
         }
 
+        this._connectLock = true;
         this._retryCount++;
 
         this._debug('connect', this._retryCount);
@@ -376,6 +376,7 @@ export default class ReconnectingWebSocket {
             .then(url => {
                 // close could be called before creating the ws
                 if (this._closeCalled) {
+                    this._connectLock = false;
                     return;
                 }
                 this._debug('connect', {url, protocols: this._protocols});

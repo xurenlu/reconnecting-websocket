@@ -213,6 +213,29 @@ test('max retries: 0', done => maxRetriesTest(0, done));
 test('max retries: 1', done => maxRetriesTest(1, done));
 test('max retries: 5', done => maxRetriesTest(5, done));
 
+test('reconnect after max retries', done => {
+    const ws = new ReconnectingWebSocket(URL, undefined, {
+        maxRetries: 1,
+        maxReconnectionDelay: 200,
+    });
+
+    let closed = false;
+    ws.addEventListener('error', () => {
+        if (ws.retryCount === 1 && !closed) {
+            const wss = new WebSocketServer({port: PORT});
+            ws.reconnect();
+            ws.addEventListener('open', () => {
+                wss.close(() => {
+                    closed = true;
+                    setTimeout(() => {
+                        done();
+                    }, 1000);
+                });
+            });
+        }
+    });
+});
+
 test('level0 event listeners are kept after reconnect', done => {
     const ws = new ReconnectingWebSocket(URL, undefined, {
         maxRetries: 4,
@@ -864,5 +887,53 @@ test('reconnect after closing', done => {
         if (i > 2) {
             throw Error('no more expected reconnections');
         }
+    });
+});
+
+test('reconnect after closing during connection', done => {
+    const wss = new WebSocketServer({port: PORT});
+    const ws = new ReconnectingWebSocket(URL, undefined, {
+        minReconnectionDelay: 100,
+        maxReconnectionDelay: 200,
+    });
+
+    ws.close();
+    setTimeout(() => {
+        ws.reconnect();
+
+        ws.addEventListener('open', () => {
+            wss.close(() => {
+                setTimeout(() => {
+                    done();
+                }, 1000);
+            });
+        });
+    }, 1000);
+});
+
+test('rapidly toggling connection', done => {
+    const wss = new WebSocketServer({port: PORT});
+    const ws = new ReconnectingWebSocket(URL, undefined, {
+        minReconnectionDelay: 100,
+        maxReconnectionDelay: 200,
+    });
+
+    ws.close();
+    ws.reconnect();
+    ws.close();
+    ws.reconnect();
+
+    let connections = 0;
+    wss.on('connection', () => {
+        connections++;
+    });
+
+    ws.addEventListener('open', () => {
+        wss.close(() => {
+            setTimeout(() => {
+                expect(connections).toBe(1);
+                done();
+            }, 1000);
+        });
     });
 });
