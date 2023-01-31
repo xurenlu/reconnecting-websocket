@@ -338,6 +338,7 @@ test('level2 event listeners using object with handleEvent', done => {
 test('connection timeout', done => {
     const proc = spawn('node', [`${__dirname}/unresponsive-server.js`, PORT_UNRESPONSIVE, '5000']);
 
+    let closeHandlerCalled = false;
     let lock = false;
     proc.stdout.on('data', () => {
         if (lock) return;
@@ -352,8 +353,15 @@ test('connection timeout', done => {
         ws.addEventListener('error', event => {
             expect(event.message).toBe('TIMEOUT');
             if (ws.retryCount === 1) {
-                setTimeout(() => done(), 1000);
+                setTimeout(() => {
+                    expect(closeHandlerCalled).toBe(true);
+                    done();
+                }, 1000);
             }
+        });
+
+        ws.addEventListener('close', () => {
+            closeHandlerCalled = true;
         });
     });
 });
@@ -904,6 +912,7 @@ test('reconnect after closing during connection', done => {
         ws.addEventListener('open', () => {
             wss.close(() => {
                 setTimeout(() => {
+                    ws.close(); // Avoid trying to reconnect after the test
                     done();
                 }, 1000);
             });
@@ -932,6 +941,7 @@ test('rapidly toggling connection', done => {
         wss.close(() => {
             setTimeout(() => {
                 expect(connections).toBe(1);
+                ws.close(); // Avoid trying to reconnect after the test
                 done();
             }, 1000);
         });
