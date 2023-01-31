@@ -404,10 +404,10 @@ export default class ReconnectingWebSocket {
         this._removeListeners();
         try {
             this._ws.close(code, reason);
-            this._handleClose(new Events.CloseEvent(code, reason, this));
         } catch (error) {
-            // ignore
+            this._debug('swallowing disconnect error', error);
         }
+        this._handleClose(new Events.CloseEvent(code, reason, this));
     }
 
     private _acceptOpen() {
