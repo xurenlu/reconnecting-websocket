@@ -1,6 +1,6 @@
 {
-    "name": "@reedsy/reconnecting-websocket",
-    "version": "4.4.0-reedsy-1.0.2",
+    "name": "@suntower/reconnecting-websocket",
+    "version": "4.4.0-suntower-1.0.2",
     "description": "Reconnecting WebSocket",
     "main": "./dist/reconnecting-websocket-cjs.js",
     "module": "./dist/reconnecting-websocket-mjs.js",
@@ -63,7 +63,8 @@
         "url": "https://github.com/reedsy/reconnecting-websocket/issues"
     },
     "publishConfig": {
-        "registry": "https://registry.npmjs.org"
+        "registry": "https://registry.npmjs.org",
+        "access": "public"
     },
     "homepage": "https://github.com/reedsy/reconnecting-websocket#readme",
     "lint-staged": {
